@@ -6,7 +6,8 @@ from piggybank.serializers import CurrencySerializer
 from piggybank.serializers import CategorySerializer
 from piggybank.models import Category
 from piggybank.models import Currency
-from piggybank.serializers import TransactionSerializer
+from piggybank.serializers import ReadTransactionSerializer
+from piggybank.serializers import WriteTransactionSerializer
 
 
 class CurrencyListAPIView(ListAPIView):
@@ -21,4 +22,8 @@ class CategoryModelViewSet(ModelViewSet):
 
 class TransactionModelViewSet(ModelViewSet):
     queryset = Transaction.objects.all()
-    serializer_class = TransactionSerializer
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return ReadTransactionSerializer
+        return WriteTransactionSerializer
