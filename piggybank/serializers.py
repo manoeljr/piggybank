@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from piggybank.models import Category
 from piggybank.models import Currency
+from piggybank.models import Transaction
 
 
 class CurrencySerializer(serializers.ModelSerializer):
@@ -16,3 +17,10 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
+
+
+class TransactionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Transaction
+        fields = ['id', 'amount', 'currency', 'date', 'description', 'category']
