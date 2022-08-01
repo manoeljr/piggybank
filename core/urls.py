@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
 
 from piggybank import views
 from piggybank.views import CurrencyListAPIView
@@ -12,6 +13,8 @@ router.register('categories', views.CategoryModelViewSet, basename='category')
 router.register('transactions', views.TransactionModelViewSet, basename='transaction')
 
 urlpatterns = [
+    path('login/', obtain_auth_token, name='obtain-auth-token'),
+
     path('currencies/', CurrencyListAPIView.as_view(), name='currency'),
 
     path('admin/', admin.site.urls),
