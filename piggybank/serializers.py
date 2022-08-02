@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from piggybank.models import Category
@@ -28,12 +29,20 @@ class WriteTransactionSerializer(serializers.ModelSerializer):
         fields = ['amount', 'currency', 'date', 'description', 'category']
 
 
-class ReadTransactionSerializer(serializers.ModelSerializer):
+class ReadUserSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
+        read_only_fields = fields
+
+
+class ReadTransactionSerializer(serializers.ModelSerializer):
+    user = ReadUserSerializer()
     currency = CurrencySerializer()
     category = CategorySerializer()
 
     class Meta:
         model = Transaction
-        fields = ['id', 'amount', 'currency', 'date', 'description', 'category']
+        fields = ['id', 'amount', 'currency', 'date', 'description', 'category', 'user']
         read_only_fields = fields
