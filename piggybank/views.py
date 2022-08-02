@@ -23,8 +23,10 @@ class CurrencyListAPIView(ListAPIView):
 
 class CategoryModelViewSet(ModelViewSet):
     permission_classes = (IsAuthenticated,)
-    queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user)
 
 
 class TransactionModelViewSet(ModelViewSet):
@@ -41,6 +43,3 @@ class TransactionModelViewSet(ModelViewSet):
         if self.action in ("list", "retrieve"):
             return ReadTransactionSerializer
         return WriteTransactionSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)

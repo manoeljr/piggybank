@@ -6,6 +6,14 @@ from piggybank.models import Currency
 from piggybank.models import Transaction
 
 
+class ReadUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
+        read_only_fields = fields
+
+
 class CurrencySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -14,27 +22,24 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = Category
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'user']
 
 
 class WriteTransactionSerializer(serializers.ModelSerializer):
-
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     currency = serializers.SlugRelatedField(slug_field='code', queryset=Currency.objects.all())
 
     class Meta:
         model = Transaction
-        fields = ['amount', 'currency', 'date', 'description', 'category']
+        fields = ['user', 'amount', 'currency', 'date', 'description', 'category']
 
-
-class ReadUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name']
-        read_only_fields = fields
+    def __int__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        user = self.context['request'].user
+        self.fields['category'].queryset = user.categories.all()
 
 
 class ReadTransactionSerializer(serializers.ModelSerializer):
