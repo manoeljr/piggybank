@@ -16,6 +16,6 @@ urlpatterns = [
     path('login/', obtain_auth_token, name='obtain-auth-token'),
 
     path('currencies/', CurrencyListAPIView.as_view(), name='currency'),
-
+    path('report/', views.TransactionReportAPIView.as_view(), name='report'),
     path('admin/', admin.site.urls),
 ] + router.urls

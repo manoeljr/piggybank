@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
@@ -51,3 +53,37 @@ class ReadTransactionSerializer(serializers.ModelSerializer):
         model = Transaction
         fields = ['id', 'amount', 'currency', 'date', 'description', 'category', 'user']
         read_only_fields = fields
+
+
+class ReportEntrySerializer(serializers.Serializer):
+    category = CategorySerializer()
+    total = serializers.DecimalField(max_digits=15, decimal_places=2)
+    count = serializers.IntegerField()
+    avg = serializers.DecimalField(max_digits=15, decimal_places=2)
+
+
+class PersonSerializer(serializers.Serializer):
+    """
+    Classes desenvolvida para teste de como funciona um serializer,
+    não faz parte do desenvolvimento das transactions
+    """
+    first_name = serializers.CharField(allow_null=True)
+    birthdate = serializers.DateField()
+    age = serializers.SerializerMethodField()
+
+    def get_age(self, obj):
+        """ Pegando a variavel age e modificando subescrevando o metodo built-in """
+        delta = date.today() - obj.birthdate
+        return int(delta.days / 365)
+
+    def validate_birthdate(self, value):
+        """ Sobescrevendo o metodo de validação do DRF, is_valid() """
+        if value > date.today():
+            raise serializers.ValidationError('The birthdate must be a date before today.')
+        return value
+
+    def validate(self, data):
+        """ Verificando se o campo first_name está vazio """
+        if not data['first_name']:
+            raise serializers.ValidationError('You must inform either the first name.')
+        return data
