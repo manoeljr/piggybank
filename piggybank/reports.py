@@ -28,7 +28,7 @@ def transaction_reports(params: ReportParams):
     queryset = Transaction.objects.filter(
         user=params.user,
         date__gte=params.start_date,
-        date_lte=params.end_date
+        date__lte=params.end_date
     ).values('category').annotate(
         total=Sum('amount'),
         count=Count('id'),
