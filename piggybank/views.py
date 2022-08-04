@@ -16,6 +16,7 @@ from piggybank.models import Category
 from piggybank.models import Currency
 from piggybank.serializers import ReadTransactionSerializer
 from piggybank.serializers import ReportEntrySerializer
+from piggybank.serializers import ReportParamsSerializer
 from piggybank.serializers import WriteTransactionSerializer
 
 
@@ -50,7 +51,13 @@ class TransactionModelViewSet(ModelViewSet):
 
 
 class TransactionReportAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request):
-        data = transaction_reports()
+
+        params_serializer = ReportParamsSerializer(data=request.data)
+        params_serializer.is_valid(raise_exception=True)
+        params = params_serializer.save()
+        data = transaction_reports(params)
         serializer = ReportEntrySerializer(instance=data, many=True)
-        Response(data=serializer.data)
+        return Response(data=serializer.data)

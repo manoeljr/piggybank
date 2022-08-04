@@ -6,6 +6,7 @@ from rest_framework import serializers
 from piggybank.models import Category
 from piggybank.models import Currency
 from piggybank.models import Transaction
+from piggybank.reports import ReportParams
 
 
 class ReadUserSerializer(serializers.ModelSerializer):
@@ -60,6 +61,15 @@ class ReportEntrySerializer(serializers.Serializer):
     total = serializers.DecimalField(max_digits=15, decimal_places=2)
     count = serializers.IntegerField()
     avg = serializers.DecimalField(max_digits=15, decimal_places=2)
+
+
+class ReportParamsSerializer(serializers.Serializer):
+    start_date = serializers.DateTimeField()
+    end_date = serializers.DateTimeField()
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    def create(self, validated_data):
+        return ReportParams(**validated_data)
 
 
 class PersonSerializer(serializers.Serializer):
