@@ -55,7 +55,7 @@ class TransactionReportAPIView(APIView):
 
     def get(self, request):
 
-        params_serializer = ReportParamsSerializer(data=request.data)
+        params_serializer = ReportParamsSerializer(data=request.data, context={'request': request})
         params_serializer.is_valid(raise_exception=True)
         params = params_serializer.save()
         data = transaction_reports(params)
