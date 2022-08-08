@@ -10,6 +10,7 @@ from django.db.models import Sum
 from piggybank.models import Category
 from piggybank.models import Transaction
 
+
 @dataclass
 class ReportEntry:
     category: Category
@@ -17,11 +18,13 @@ class ReportEntry:
     count: int
     avg: Decimal
 
+
 @dataclass
 class ReportParams:
     start_date: datetime.datetime
     end_date: datetime.datetime
     user: User
+
 
 def transaction_reports(params: ReportParams):
     data = []

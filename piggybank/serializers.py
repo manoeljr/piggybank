@@ -10,7 +10,6 @@ from piggybank.reports import ReportParams
 
 
 class ReadUserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name']
@@ -18,7 +17,6 @@ class ReadUserSerializer(serializers.ModelSerializer):
 
 
 class CurrencySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Currency
         fields = ['id', 'code', 'name']
@@ -26,6 +24,7 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Category
         fields = ['id', 'name', 'user']
