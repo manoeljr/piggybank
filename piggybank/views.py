@@ -2,13 +2,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.filters import OrderingFilter
 from rest_framework.filters import SearchFilter
-from rest_framework.generics import ListAPIView
+from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from piggybank.models import Transaction
+from piggybank.permissions import IsAdminOrReadOnly
 from piggybank.reports import transaction_reports
 from piggybank.serializers import CurrencySerializer
 from piggybank.serializers import CategorySerializer
@@ -20,14 +21,15 @@ from piggybank.serializers import ReportParamsSerializer
 from piggybank.serializers import WriteTransactionSerializer
 
 
-class CurrencyListAPIView(ListAPIView):
+class CurrencyModelViewSet(ModelViewSet):
+    permission_classes = (IsAdminOrReadOnly,)
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
     pagination_class = None
 
 
 class CategoryModelViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (DjangoModelPermissions,)
     serializer_class = CategorySerializer
 
     def get_queryset(self):
@@ -35,7 +37,6 @@ class CategoryModelViewSet(ModelViewSet):
 
 
 class TransactionModelViewSet(ModelViewSet):
-    permission_classes = (IsAuthenticated,)
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend, ]
     search_fields = ['description', ]
     ordering_fields = ['amount', 'date', ]
